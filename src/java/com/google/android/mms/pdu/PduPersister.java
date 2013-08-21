@@ -1347,6 +1347,11 @@ public class PduPersister {
                     // we have to ignore it in loadRecipients.
                     if (groupMmsEnabled) {
                         loadRecipients(PduHeaders.TO, recipients, addressMap, true);
+                        
+                        // Also load any numbers in the CC field to address group messaging
+                        // compatibility issues with devices that place numbers in this field
+                        // for group messages.
+                        loadRecipients(PduHeaders.CC, recipients, addressMap, true);
                     }
                     break;
                 case PduHeaders.MESSAGE_TYPE_SEND_REQ:
@@ -1442,8 +1447,8 @@ public class PduPersister {
     /**
      * For a given address type, extract the recipients from the headers.
      *
-     * @param addressType can be PduHeaders.FROM or PduHeaders.TO
-     * @param recipients a HashSet that is loaded with the recipients from the FROM or TO headers
+     * @param addressType can be PduHeaders.FROM, PduHeaders.TO or PduHeaders.CC
+     * @param recipients a HashSet that is loaded with the recipients from the FROM, TO or CC headers
      * @param addressMap a HashMap of the addresses from the ADDRESS_FIELDS header
      * @param excludeMyNumber if true, the number of this phone will be excluded from recipients
      */
