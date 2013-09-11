@@ -1347,6 +1347,7 @@ public class PduPersister {
                     // we have to ignore it in loadRecipients.
                     if (groupMmsEnabled) {
                         loadRecipients(PduHeaders.TO, recipients, addressMap, true);
+                        loadRecipients(PduHeaders.CC, recipients, addressMap, true);
                     }
                     break;
                 case PduHeaders.MESSAGE_TYPE_SEND_REQ:
