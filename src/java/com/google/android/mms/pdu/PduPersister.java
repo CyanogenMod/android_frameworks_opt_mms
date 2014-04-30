@@ -795,6 +795,9 @@ public class PduPersister {
                     || ContentType.APP_SMIL.equals(contentType)
                     || ContentType.TEXT_HTML.equals(contentType)) {
                 ContentValues cv = new ContentValues();
+                if (data == null) {
+                    data = new String("").getBytes(CharacterSets.DEFAULT_CHARSET_NAME);
+                }
                 cv.put(Telephony.Mms.Part.TEXT, new EncodedStringValue(data).getString());
                 if (mContentResolver.update(uri, cv, null, null) != 1) {
                     throw new MmsException("unable to update " + uri.toString());
