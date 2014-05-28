@@ -26,25 +26,19 @@ interface IMms {
      * Send an MMS message
      *
      * @param pdu the MMS message encoded in standard MMS PDU format
+     * @param locationUrl the optional location url for where this message should be sent to
      * @param sentIntent if not NULL this <code>PendingIntent</code> is
      *  broadcast when the message is successfully sent, or failed
-     * @param deliveryIntent if not NULL this <code>PendingIntent</code> is
-     *  broadcast when the message is delivered to the recipient
-     * @param readIntent if not NULL this <code>PendingIntent</code> is
-     *  broadcast when the message is read by the recipient
      */
-    void sendMessage(in byte[] pdu, in PendingIntent sentIntent, in PendingIntent deliveryIntent,
-            in PendingIntent readIntent);
+    void sendMessage(in byte[] pdu, String locationUrl, in PendingIntent sentIntent);
 
     /**
      * Download an MMS message using known location and transaction id
      *
-     * @param location the location URL of the MMS message to be downloaded, usually obtained
+     * @param locationUrl the location URL of the MMS message to be downloaded, usually obtained
      *  from the MMS WAP push notification
-     * @param transactionId the transaction ID of the MMS message, usually obtained from the
-     *  MMS WAP push notification
      * @param downloadedIntent if not NULL this <code>PendingIntent</code> is
      *  broadcast when the message is downloaded, or the download is failed
      */
-    void downloadMessage(String location, String transactionId, in PendingIntent downloadedIntent);
+    void downloadMessage(String locationUrl, in PendingIntent downloadedIntent);
 }

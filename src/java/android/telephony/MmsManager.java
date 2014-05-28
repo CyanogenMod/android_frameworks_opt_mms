@@ -36,6 +36,16 @@ public final class MmsManager {
 
     private static final MmsManager sInstance = new MmsManager();
 
+    // MMS send/download failure result codes
+
+    public static final int RESULT_ERROR_UNSPECIFIED = 1;
+    public static final int RESULT_ERROR_INVALID_APN = 2;
+    public static final int RESULT_ERROR_UNABLE_CONNECT_MMS = 3;
+    public static final int RESULT_ERROR_HTTP_FAILURE = 4;
+
+    // Intent extra name for result data
+    public static final String EXTRA_DATA = "data";
+
     /**
      * Get the default instance of the MmsManager
      *
@@ -53,15 +63,11 @@ public final class MmsManager {
      * Send an MMS message
      *
      * @param pdu the MMS message encoded in standard MMS PDU format
+     * @param locationUrl the optional location url where message should be sent to
      * @param sentIntent if not NULL this <code>PendingIntent</code> is
      *  broadcast when the message is successfully sent, or failed
-     * @param deliveryIntent if not NULL this <code>PendingIntent</code> is
-     *  broadcast when the message is delivered to the recipient
-     * @param readIntent if not NULL this <code>PendingIntent</code> is
-     *  broadcast when the message is read by the recipient
      */
-    public void sendMessage(byte[] pdu, PendingIntent sentIntent, PendingIntent deliveryIntent,
-            PendingIntent readIntent) {
+    public void sendMessage(byte[] pdu, String locationUrl, PendingIntent sentIntent) {
         if (pdu == null || pdu.length == 0) {
             throw new IllegalArgumentException("Empty or zero length PDU");
         }
@@ -71,7 +77,7 @@ public final class MmsManager {
                 Log.e(LOG_TAG, "Can not find Mms service");
                 return;
             }
-            iMms.sendMessage(pdu, sentIntent, deliveryIntent, readIntent);
+            iMms.sendMessage(pdu, locationUrl, sentIntent);
         } catch (RemoteException e) {
             // Ignore it
         }
@@ -82,23 +88,20 @@ public final class MmsManager {
      *
      * @param locationUrl the location URL of the MMS message to be downloaded, usually obtained
      *  from the MMS WAP push notification
-     * @param transactionId the transaction ID of the MMS message, usually obtained from the
-     *  MMS WAP push notification
      * @param downloadedIntent if not NULL this <code>PendingIntent</code> is
      *  broadcast when the message is downloaded, or the download is failed
      */
-    public void downloadMessage(String locationUrl, String transactionId,
-            PendingIntent downloadedIntent) {
+    public void downloadMessage(String locationUrl, PendingIntent downloadedIntent) {
         if (TextUtils.isEmpty(locationUrl)) {
             throw new IllegalArgumentException("Empty MMS location URL");
         }
         try {
             final IMms iMms = IMms.Stub.asInterface(ServiceManager.getService(SERVICE));
-            if (iMms != null) {
+            if (iMms == null) {
                 Log.e(LOG_TAG, "Can not find Mms service");
                 return;
             }
-            iMms.downloadMessage(locationUrl, transactionId, downloadedIntent);
+            iMms.downloadMessage(locationUrl, downloadedIntent);
         } catch (RemoteException e) {
             // Ignore it
         }
