@@ -830,6 +830,10 @@ public class PduPersister {
                 // uri can look like:
                 // content://mms/part/98
                 os = mContentResolver.openOutputStream(uri);
+                if (os == null) {
+                    throw new FileNotFoundException();
+                }
+
                 if (data == null) {
                     dataUri = part.getDataUri();
                     if ((dataUri == null) || (dataUri == uri)) {
